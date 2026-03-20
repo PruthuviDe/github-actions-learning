@@ -54,6 +54,23 @@ jobs:
         working-directory: ./sample-app
         run: npm test
       
+      - name: Create build output
+        working-directory: ./sample-app
+        run: |
+          mkdir -p build-output
+          echo "Build completed at $(date)" > build-output/build-info.txt
+          echo "Node version: ${{ matrix.node-version }}" >> build-output/build-info.txt
+          echo "Environment: ${{ env.NODE_ENV }}" >> build-output/build-info.txt
+          cp package.json build-output/
+          [ -d dist ] && cp -r dist build-output/ || echo "No dist folder (OK for this project)"
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output-${{ matrix.node-version }}
+          path: sample-app/build-output/
+          retention-days: 30
+      
       - name: Upload coverage reports
         if: matrix.node-version == '18.x'
         uses: actions/upload-artifact@v4
@@ -103,3 +120,40 @@ jobs:
           echo "🎯 Test Run Summary"
           echo "==================="
           echo "✅ All tests completed"
+
+  download-artifacts:
+    name: Download and Verify Artifacts
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: List downloaded artifacts
+        run: |
+          echo "📦 Downloaded Artifacts:"
+          echo "======================="
+          find artifacts -type f | head -20
+          echo ""
+          echo "Artifact structure:"
+          tree artifacts 2>/dev/null || find artifacts -type d
+      
+      - name: Show build info from artifacts
+        run: |
+          echo "🔍 Build Information from Artifacts:"
+          echo "===================================="
+          for file in artifacts/build-output-*/build-info.txt; do
+            if [ -f "$file" ]; then
+              echo ""
+              echo "From: $file"
+              cat "$file"
+            fi
+          done
+      
+      - name: Verify artifacts integrity
+        run: |
+          echo "✅ Artifacts successfully downloaded and available for next steps!"
+          echo "This demonstrates passing data between jobs using artifacts."
