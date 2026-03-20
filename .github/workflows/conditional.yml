@@ -1,0 +1,117 @@
+name: Conditional Execution
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build with Conditional Steps
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Print branch information
+        run: |
+          echo "🌿 Branch Information:"
+          echo "====================="
+          echo "Ref: ${{ github.ref }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+      
+      - name: Build application
+        run: |
+          echo "🔨 Building application..."
+          echo "Build completed successfully"
+      
+      - name: Deploy to Production (main only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "🚀 PRODUCTION DEPLOYMENT"
+          echo "========================"
+          echo "Deploying to production environment..."
+          echo "Database: prod-db.example.com"
+          echo "Region: us-east-1"
+          echo "Status: ✅ Deployment would execute here"
+      
+      - name: Deploy to Staging (develop only)
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          echo "📦 STAGING DEPLOYMENT"
+          echo "===================="
+          echo "Deploying to staging environment..."
+          echo "Database: staging-db.example.com"
+          echo "Region: us-west-2"
+          echo "Status: ✅ Deployment would execute here"
+      
+      - name: Skip deployment notice
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop'
+        run: |
+          echo "⏭️ DEPLOYMENT SKIPPED"
+          echo "===================="
+          echo "This branch (${{ github.ref }}) is not configured for deployment."
+          echo "Only 'main' and 'develop' branches trigger automatic deployments."
+      
+      - name: Send notification (push only)
+        if: github.event_name == 'push'
+        run: |
+          echo "📧 Sending notification..."
+          echo "Push event detected - notifying team"
+          echo "Commit pushed by: ${{ github.actor }}"
+      
+      - name: Run detailed tests (pull request)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "🧪 Running detailed test suite for PR..."
+          echo "Full coverage analysis enabled"
+          echo "Integration tests: ENABLED"
+          echo "Performance tests: ENABLED"
+      
+      - name: Run quick validation (push)
+        if: github.event_name == 'push'
+        run: |
+          echo "⚡ Running quick validation..."
+          echo "Smoke tests: ENABLED"
+          echo "Fast checks only for push events"
+
+  security-scan:
+    name: Security Scan (main branch only)
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run security scan
+        run: |
+          echo "🔒 Security Scan - MAIN BRANCH ONLY"
+          echo "==================================="
+          echo "Scanning for vulnerabilities..."
+          echo "✅ No critical vulnerabilities found"
+      
+      - name: Generate security report
+        run: |
+          echo "Generating comprehensive security report..."
+          echo "Report would be stored in artifacts"
+
+  notify-team:
+    name: Notify Team on Success
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: success() && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Send success notification
+        run: |
+          echo "✅ SUCCESS NOTIFICATION"
+          echo "====================="
+          echo "Build and deployment successful!"
+          echo "Branch: main"
+          echo "Status: Ready for production"
+          echo "Notifying team via Slack/Email..."
