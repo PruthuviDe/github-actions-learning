@@ -45,6 +45,27 @@ app.post('/api/data', (req, res) => {
   });
 });
 
+// New User Profile API endpoint
+// Returns user profile information based on user ID
+app.get('/api/users/:id', (req, res) => {
+  const userId = req.params.id;
+  
+  if (!userId || isNaN(userId)) {
+    return res.status(400).json({ 
+      error: 'Valid user ID is required',
+      received: userId 
+    });
+  }
+
+  res.json({
+    id: parseInt(userId),
+    name: `User ${userId}`,
+    email: `user${userId}@example.com`,
+    profileUrl: `/api/users/${userId}`,
+    createdAt: new Date().toISOString()
+  });
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
