@@ -1,3 +1,5 @@
+# This is a learning workflow for understanding GitHub Actions
+# Task 2: Testing automatic triggers on push event
 name: Hello World Workflow
 
 on:
