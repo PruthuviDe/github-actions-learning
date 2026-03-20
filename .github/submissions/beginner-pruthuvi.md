@@ -68,6 +68,8 @@
 
 ![Task 3 - Application Running Locally](./task3-browser.png)
 
+![Task 3.1 - Additional Browser View](./task3.1-browser.png)
+
 ---
 
 ## 🎯 What I Learned
