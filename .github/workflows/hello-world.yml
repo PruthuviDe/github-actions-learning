@@ -33,5 +33,8 @@ jobs:
       - name: List files
         run: ls -la
       
+      - name: Access secret
+        run: echo "Secret length: ${#{{ secrets.TEST_SECRET }}}"
+      
       - name: Print success message
         run: echo "✅ Workflow completed successfully!"
