@@ -28,6 +28,8 @@
 - Verified all echo outputs in the workflow logs
 - Screenshots show successful workflow run with all outputs visible
 
+![Task 1 - Hello World Workflow](./task1-workflow.png)
+
 ---
 
 ### Task 2: Understand Workflow Triggers
@@ -43,6 +45,8 @@
 - Verified workflow was triggered by `push` event (not manual)
 - Confirmed branch: `main`
 - Screenshots show automatic push-triggered workflow execution
+
+![Task 2 - Push-Triggered Workflow](./task2-push-trigger.png)
 
 ---
 
@@ -61,6 +65,8 @@
 - Ran `npm start` / `node src/server.js` - Server started successfully on port 3000
 - Visited `http://localhost:3000` in browser - Application loaded and working
 - Screenshots show successful test run and app running in browser
+
+![Task 3 - Application Running Locally](./task3-browser.png)
 
 ---
 
